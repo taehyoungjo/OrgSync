@@ -7,3 +7,9 @@ def index():
     """"""
     if request.method == "GET":
         return render_template("index.html")
+
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    """"""
+    if request.method == "GET":
+        return render_template("search.html")
