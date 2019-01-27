@@ -10,7 +10,7 @@
 
 {% block main %}
 
-<form action="/upload" method="POST">
+<form action="/upload" enctype="multipart/form-data" method="post">
 	<div class="form-group">
 		<label for="id">Patient ID</label>
 		<input type="text" class="form-control" name="id" id="id" required>
