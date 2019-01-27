@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, flash, jsonify, redirect, render_template, request, session, url_for
 from flask_session import Session
 from werkzeug.utils import secure_filename
@@ -51,7 +53,7 @@ def search():
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
 	if request.method == "GET":
-		return render_template("upload.html", uploaded=False)
+		return render_template("upload.html")
 
 	elif request.method == "POST":
 
@@ -74,15 +76,16 @@ def upload():
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 			filepath = "./vcfs/" + filename
 
-			genotype = analyze(file_path)
+			# genotype = analyze(file_path)
 
-			db.execute("INSERT INTO 'recipients' ('id','location') VALUES (:id, :location)", id=id, location=location)
-			db.execute("INSERT INTO 'recipient_genotypes' ('id') VALUES (:id)", id=id)
-			i = 1
+			# db.execute("INSERT INTO 'recipients' ('id','location') VALUES (:id, :location)", id=id, location=location)
+			# db.execute("INSERT INTO 'recipient_genotypes' ('id') VALUES (:id)", id=id)
+			# i = 1
 
-			for gene in genotype:
-				db.execute("UPDATE 'recipient_genotypes' SET :column = :gene WHERE id = :id", column=i, gene=gene, id=id)
-				i = i + 1
+			# for gene in genotype:
+			# 	 db.execute("UPDATE 'recipient_genotypes' SET :column = :gene WHERE id = :id", column=i, gene=gene, id=id)
+			# 	 i = i + 1
 
-			os.remove(file_path)
-			return render_template("upload.html", uploaded=True)
+			# os.remove(file_path)
+			flash('Upload Successful')
+			return redirect(request.url)
