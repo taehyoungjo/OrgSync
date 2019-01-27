@@ -30,7 +30,7 @@ def index():
     if request.method == "GET":
         return render_template("index.html")
 
-@app.route("/search", methods=["GET"])
+@app.route("/search", methods=["GET", "POST"])
 def search():
     """"""
     if request.method == "GET":
@@ -43,7 +43,7 @@ def search():
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
 	if request.method == "GET":
-		return render_template("upload.html")
+		return render_template("upload.html", uploaded=False)
 
 	elif request.method == "POST":
 
@@ -54,6 +54,7 @@ def upload():
 		if 'file' not in request.files:
 			flash('No file part')
 			return redirect(request.url)
+		
 		file = request.files["file"]
 
 		if file.filename == '':
@@ -76,4 +77,4 @@ def upload():
 				i = i + 1
 
 			os.remove(file_path)
-			return render_template("index.html")
+			return render_template("upload.html", uploaded=True)
