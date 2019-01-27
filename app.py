@@ -47,12 +47,13 @@ def search():
     """"""
     if request.method == "GET":
         id = request.args.get("id")
-        donor_info = db.execute("SELECT * FROM recipients")
-        recipients_info = db.execute("SELECT * FROM donors WHERE id=:id", id=id)
+        recipients_info = db.execute("SELECT * FROM recipients")
+        donor_info = db.execute("SELECT * FROM donors WHERE id=:id", id=id)
         donor = db.execute("SELECT * FROM donor_genotypes WHERE id=:id", id=id)
         recipients = db.execute("SELECT * FROM recipient_genotypes")
         matches = compare(donor, recipients)
-        return render_template("search.html", donor=donor, matches=matches)
+        print(recipients_info)
+        return render_template("search.html", donor=donor, matches=matches, donor_info=donor_info, recipients_info=recipients_info)
 
     elif request.method == "POST":
     	return render_template("search.html")
