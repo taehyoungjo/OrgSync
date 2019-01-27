@@ -5,7 +5,7 @@ from flask_session import Session
 from werkzeug.utils import secure_filename
 from cs50 import SQL
 
-from genome_analysis import analyze
+from genome_analysis import analyze, compare
 
 UPLOAD_FOLDER = "./vcfs"
 ALLOWED_EXTENSIONS = set(["vcf"])
@@ -29,6 +29,8 @@ def after_request(response):
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+db = SQL("sqlite:///database.db")
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -39,14 +41,20 @@ db = SQL("sqlite:///database.db")
 def index():
     """"""
     if request.method == "GET":
-        return render_template("index.html")
+        id = db.execute("SELECT id FROM donors")
+        return render_template("index.html", id=id)
 
 @app.route("/search", methods=["GET", "POST"])
 def search():
     """"""
     if request.method == "GET":
         id = request.args.get("id")
-        return render_template("search.html", id=id)
+        donor_info = db.execute("SELECT * FROM recipients")
+        recipients_info = db.execute("SELECT * FROM donors WHERE id=:id", id=id)
+        donor = db.execute("SELECT * FROM donor_genotypes WHERE id=:id", id=id)
+        recipients = db.execute("SELECT * FROM recipient_genotypes")
+        matches = compare(donor, recipients)
+        return render_template("search.html", donor=donor, matches=matches)
 
     elif request.method == "POST":
     	return render_template("search.html")
