@@ -20,10 +20,10 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Expires"] = 0
-    response.headers["Pragma"] = "no-cache"
-    return response
+	response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+	response.headers["Expires"] = 0
+	response.headers["Pragma"] = "no-cache"
+	return response
 
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_TYPE"] = "filesystem"
@@ -32,31 +32,31 @@ Session(app)
 db = SQL("sqlite:///database.db")
 
 def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+	return '.' in filename and \
+	filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    """"""
-    if request.method == "GET":
-        id = db.execute("SELECT id FROM donors")
-        return render_template("index.html", id=id)
+	""""""
+	if request.method == "GET":
+		recipients = db.execute("SELECT * FROM recipients")
+		return render_template("index.html", recipients=recipients)
 
-@app.route("/search", methods=["GET", "POST"])
-def search():
-    """"""
-    if request.method == "GET":
-        id = request.args.get("id")
-        recipients_info = db.execute("SELECT * FROM recipients")
-        donor_info = db.execute("SELECT * FROM donors WHERE id=:id", id=id)
-        donor = db.execute("SELECT * FROM donor_genotypes WHERE id=:id", id=id)
-        recipients = db.execute("SELECT * FROM recipient_genotypes")
-        matches = compare(donor, recipients)
-        print(recipients_info)
-        return render_template("search.html", donor=donor, matches=matches, donor_info=donor_info, recipients_info=recipients_info)
 
-    elif request.method == "POST":
-    	return render_template("search.html")
+@app.route("/match", methods=["GET", "POST"])
+def match():
+	""""""
+	if request.method == "GET":
+		recipients = db.execute("SELECT * FROM recipients")
+		return render_template("search.html", recipients=recipients)
+	elif request.method == "POST":
+		recipient_id = request.form.get("id")
+		print(recipient_id)
+		recipient_info = db.execute("SELECT * FROM recipients WHERE id = :id", id=recipient_id)
+		donors = db.execute("SELECT * FROM donors")
+		return render_template("results.html", donors=donors)
+
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
@@ -65,34 +65,49 @@ def upload():
 
 	elif request.method == "POST":
 
-		id = int(request.form.get("id"))
-
+		id = request.form.get("id")
+		patient_type = request.form.get("patient_type")
 		location = int(request.form.get("location"))
+		age = request.form.get("age")
 
 		if 'file' not in request.files:
-			flash('No file part')
-			return redirect(request.url)
-		
+				flash('No file part')
+				return redirect(request.url)
+
+
 		file = request.files["file"]
+
+		print(id)
+		print(patient_type)
+		print(location)
+		print(age)
+		print(file)
 
 		if file.filename == '':
 			flash('No selected file')
 			return redirect(request.url)
 
+
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 			filepath = "./vcfs/" + filename
-
 			# genotype = analyze(file_path)
 
-			# db.execute("INSERT INTO 'recipients' ('id','location') VALUES (:id, :location)", id=id, location=location)
-			# db.execute("INSERT INTO 'recipient_genotypes' ('id') VALUES (:id)", id=id)
-			# i = 1
-
-			# for gene in genotype:
-			# 	 db.execute("UPDATE 'recipient_genotypes' SET :column = :gene WHERE id = :id", column=i, gene=gene, id=id)
-			# 	 i = i + 1
+			# if patient_type == "recipient":
+			# 	# db.execute("INSERT INTO 'recipients' ('id','location') VALUES (:id, :location)", id=id, location=location)
+			# 	# db.execute("INSERT INTO 'recipient_genotypes' ('id') VALUES (:id)", id=id)
+			# 	# i = 1
+			# 	# for gene in genotype:
+			# 	# 	 db.execute("UPDATE 'recipient_genotypes' SET :column = :gene WHERE id = :id", column=i, gene=gene, id=id)
+			# 	# 	 i = i + 1
+			# else:
+			# 	# db.execute("INSERT INTO 'donors' ('id','location') VALUES (:id, :location)", id=id, location=location)
+			# 	# db.execute("INSERT INTO 'donor_genotypes' ('id') VALUES (:id)", id=id)
+			# 	# i = 1
+			# 	# for gene in genotype:
+			# 	# 	 db.execute("UPDATE 'donor_genotypes' SET :column = :gene WHERE id = :id", column=i, gene=gene, id=id)
+			# 	# 	 i = i + 1
 
 			os.remove(filepath)
 			flash('Upload Successful')
