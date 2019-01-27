@@ -39,12 +39,14 @@
               </tr>
             </thead>
             <tbody>
+            {% for id in results %}
               <tr>
-                <td scope="row">1</td>
-                <td>Mark</td>
-                <td>Otto</td>
+                <td scope="row"></td>
+                <td></td>
+                <td>{{ id }}</td>
               </tr>
             </tbody>
+            {% endfor %}
     </table>
 </div>
 
