@@ -20,7 +20,7 @@
                 <input autocomplete="off" autofocus class="form-control" name="id" placeholder="Patient ID" list="suggestions" onkeyup="search();" type="text">
                 <datalist id="suggestions">
                     {% for id in id %}
-                    <option value="{{ id }}">{{ id }</option>
+                    <option value="{{ id }}">{{ id }}</option>
                     {% endfor %}
                 </datalist>
             </div>
