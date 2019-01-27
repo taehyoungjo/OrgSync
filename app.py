@@ -1,7 +1,7 @@
 from flask import Flask, flash, jsonify, redirect, render_template, request, session
 from werkzeug.utils import secure_filename
 
-from genome_analysis import analyze
+from genome_analysis import analyze, compare
 
 
 app = Flask(__name__)
