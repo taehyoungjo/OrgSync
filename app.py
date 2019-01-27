@@ -8,10 +8,18 @@ ALLOWED_EXTENSIONS = set(["vcf"])
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+db = SQL("sqlite:///database.db")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -34,6 +42,11 @@ def upload():
 		return render_template("upload.html")
 
 	elif request.method == "POST"
+
+		id = int(request.form.get("id"))
+
+		location = int(request.form.get("location"))
+
     	if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -47,10 +60,16 @@ def upload():
         	filename = secure_filename(file.filename)
         	file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
    	    	filepath = "./vcfs/" + filename
+
 	    	genotype = analyze(file_path)
 
-	    	for gene in genotype:
-	    		db.execute("INSERT INTO ''")
+    		db.execute("INSERT INTO 'recipients' ('id','location') VALUES (:id, :location)", id=id, location=location)
+    		db.execute("INSERT INTO 'recipient_genotypes' ('id') VALUES (:id)", id=id)
+    		i = 1
+    		
+    		for gene in genotype:
+    			db.execute("UPDATE 'recipient_genotypes' SET :column = :gene WHERE id = :id", column=i, gene=gene id=id)
+    			i++
 
 	    	os.remove(file_path)
 	    	return render_template("index.html")

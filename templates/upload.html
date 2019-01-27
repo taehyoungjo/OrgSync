@@ -11,7 +11,23 @@
 {% block main %}
 
 <form action="/search" method="POST">
+	Patient ID:
+	<input type="text" name="id">
 	
+	<select name="location">
+		<option value="1">A</option>
+		<option value="2">A</option>
+		<option value="3">A</option>
+		<option value="4">A</option>
+		<option value="5">A</option>
+		<option value="6">A</option>
+		<option value="7">A</option>
+		<option value="8">A</option>
+		<option value="9">A</option>
+		<option value="10">A</option>
+		<option value="11">A</option>
+	</select>
+
 	Genome Upload <input type="file" name="file">
 	<button type="submit" class="btn btn-primary">Upload</button>
 </form>
