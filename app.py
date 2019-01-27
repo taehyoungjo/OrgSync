@@ -19,12 +19,6 @@ def index():
     if request.method == "GET":
         return render_template("index.html")
 
-@app.route("/upload", methods=["GET", "POST"])
-def upload():
-    """"""
-    if request.method == "GET":
-        return render_template("upload.html")
-
 @app.route("/search", methods=["GET"])
 def search():
     """"""
