@@ -13,7 +13,13 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     
         <title>{% block title %}{% endblock %}</title>
-
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
         <style>{% block style %}{% endblock %}</style>
     </head>
     <body>
