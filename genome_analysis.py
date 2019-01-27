@@ -1,2 +1,5 @@
 def analyze(file_path):
-	return some kind of array
+	return True
+
+def compare(id):
+	return True
