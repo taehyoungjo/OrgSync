@@ -68,10 +68,6 @@ def upload():
 
 		location = int(request.form.get("location"))
 
-		print(id)
-		print(location)
-		print(request.files)
-
 		if 'file' not in request.files:
 			flash('No file part')
 			return redirect(request.url)
